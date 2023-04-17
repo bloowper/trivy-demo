@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'io.github.bloowper'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '17'
 
 configurations {
@@ -27,4 +27,16 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+bootBuildImage {
+	var imageFormat = "%s/%s:%s"  // <REGISTRY>/<REPOSITORY>:<TAG>
+	var registry = System.getenv("DOCKER_REGISTRY") ?: "localhost:5000"
+	var repository = System.getenv("DOCKER_REPOSITORY") ?: project.name
+	var imageTags = System.getenv("IMAGE_TAGS")?.split(" ") ?: [project.version]
+	imageTags.each { imageTag ->
+		tags.add(String.format(imageFormat, registry, repository, imageTag))
+	}
+	imageName = String.format(imageFormat,registry, repository, imageTags[0])
 }
