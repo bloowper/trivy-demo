@@ -78,7 +78,7 @@ jobs:
             $branch_prefix-$short_sha
             $short_sha
           )
-          echo "tags=$tags" >> $GITHUB_OUTPUT
+          echo 'tags="$tags"' >> $GITHUB_OUTPUT
       - name: Build image
         env:
             IMAGE_TAGS: ${{ steps.image-tags.outputs.tags }}
