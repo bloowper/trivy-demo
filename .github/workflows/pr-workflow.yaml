@@ -115,6 +115,7 @@ jobs:
         run: |
           if grep -qE 'MEDIUM|HIGH|CRITICAL' trivy-image-scan-results.sarif; then
             echo "Vulnerabilities found"
+            cat trivy-image-scan-results.sarif
             exit 1
           else
             echo "No significant vulnerabilities found"
