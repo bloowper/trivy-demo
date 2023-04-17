@@ -66,14 +66,22 @@ jobs:
           cache: gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - uses: tj-actions/branch-names@v6
+        name: Get branch name
+        id: branch-name
       - name: Create image tags
         id: image-tags
         run: |
+          branch_prefix=$(echo ${{steps.branch-name.outputs.current_branch }} | cut -d / -f 1)
           short_sha=$(echo ${{ github.event.pull_request.head.sha }} |  cut -c1-7 )
-          echo '::set-output name=IMAGE_TAGS::$short_sha'
+          tags=(
+            $branch_prefix-$short_sha
+            $short_sha
+          )
+          echo "tags=$tags" >> $GITHUB_OUTPUT
       - name: Build image
         env:
-            IMAGE_TAGS: ${{ steps.image-tags.outputs.IMAGE_TAGS }}
+            IMAGE_TAGS: ${{ steps.image-tags.outputs.tags }}
         run: |
           echo IMAGE_TAGS: $IMAGE_TAGS
           echo DOCKER_REGISTRY: $DOCKER_REGISTRY
