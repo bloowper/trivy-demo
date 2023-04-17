@@ -70,3 +70,15 @@ jobs:
         run: |
           echo $DOCKER_REGISTRY
           echo $DOCKER_REPOSITORY
+          echo $IMAGE_TAGS
+          ./gradlew bootBuildImage
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish image
+        run: |
+          image=$(docker images --format "{{.Repository}}" | grep -m1 ${{env.DOCKER_REPOSITORY}})
+          docker push --all-tags $image
