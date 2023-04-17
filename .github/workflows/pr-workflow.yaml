@@ -78,10 +78,8 @@ jobs:
             $branch_prefix-$short_sha
             $short_sha
           )
-          echo 'tags="$tags"' >> $GITHUB_OUTPUT
+          echo "IMAGE_TAGS=`echo ${tags[*]}`" >> $GITHUB_ENV
       - name: Build image
-        env:
-            IMAGE_TAGS: ${{ steps.image-tags.outputs.tags }}
         run: |
           echo IMAGE_TAGS: $IMAGE_TAGS
           echo DOCKER_REGISTRY: $DOCKER_REGISTRY
