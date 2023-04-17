@@ -109,5 +109,4 @@ jobs:
           sarif_file: 'trivy-image-scan-results.sarif'
       - name: Publish image
         run: |
-          echo $IMAGE_NAME
-          docker push --all-tags ${{env.IMAGE_NAME}}
+          docker push --all-tags ${{env.DOCKER_REPOSITORY}}
