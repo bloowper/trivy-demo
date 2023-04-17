@@ -7,7 +7,7 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  DOCKER_REPOSITORY: trivy-demo
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
 
@@ -80,5 +80,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish image
         run: |
-          image=$(docker images --format "{{.Repository}}" | grep -m1 ${{env.DOCKER_REPOSITORY}})
+          image=$(docker images --format "{{.Repository}}" | grep -m1 ${{env.DOCKER_REGISTRY}})
+          echo image $image
           docker push --all-tags $image

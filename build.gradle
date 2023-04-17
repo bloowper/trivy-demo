@@ -32,8 +32,8 @@ tasks.named('test') {
 
 bootBuildImage {
 	var imageFormat = "%s/%s:%s"  // <REGISTRY>/<REPOSITORY>:<TAG>
-	var registry = System.getenv("DOCKER_REGISTRY") ?: "localhost:5000"
-	var repository = System.getenv("DOCKER_REPOSITORY") ?: project.name
+	var registry = System.getenv("REGISTRY") ?: "localhost:5000"
+	var repository = System.getenv("IMAGE_NAME") ?: project.name
 	var imageTags = System.getenv("IMAGE_TAGS")?.split(" ") ?: [project.version]
 	imageTags.each { imageTag ->
 		tags.add(String.format(imageFormat, registry, repository, imageTag))
