@@ -44,21 +44,20 @@ jobs:
           output: 'trivy-fs-scan-results.sarif'
           severity: 'MEDIUM,HIGH,CRITICAL'
           exit-code: '1'
-#      - name: Check trivy results
-#        # This is a workaround for trivy exit-code that not working
-#        run: |
-#          if grep -qE 'MEDIUM|HIGH|CRITICAL' trivy-fs-scan-results.sarif; then
-#            echo "Vulnerabilities found"
-#            exit 1
-#          else
-#            echo "No significant vulnerabilities found"
-#            exit 0
-#          fi
-#      - name: Upload Trivy scan results to GitHub Security tab
-#        uses: github/codeql-action/upload-sarif@v2
-#        if: success() || failure()
-#        with:
-#          sarif_file: 'trivy-fs-scan-results.sarif'
+      - name: Check trivy results
+        run: |
+          if grep -qE 'MEDIUM|HIGH|CRITICAL' trivy-fs-scan-results.sarif; then
+            echo "Vulnerabilities found"
+            exit 1
+          else
+            echo "No significant vulnerabilities found"
+            exit 0
+          fi
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: 'trivy-fs-scan-results.sarif'
 
   image:
     name: Build, scan and publish docker image
@@ -100,7 +99,6 @@ jobs:
         run: |
           echo "IMAGE_NAME=`echo $(docker images --format "{{.Repository}}:{{.Tag}}" | grep -m1 ${{env.DOCKER_REPOSITORY}})`" >> $GITHUB_ENV
       - name: Scan image with Trivy
-        # https://aquasecurity.github.io/trivy/v0.40/docs/target/container_image/
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: image
@@ -110,26 +108,16 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'MEDIUM,HIGH,CRITICAL'
-      - name: Check trivy results
-        # This is a workaround for trivy exit-code that not working
-        run: |
-          if grep -qE 'MEDIUM|HIGH|CRITICAL' trivy-image-scan-results.txt; then
-            echo "Vulnerabilities found"
-            cat trivy-image-scan-results.txt
-            exit 1
-          else
-            echo "No significant vulnerabilities found"
-            exit 0
-          fi
-#      - name: Upload scan results to GitHub Security tab
-#        uses: github/codeql-action/upload-sarif@v2
-#        if: success() || failure()
-#        with:
-#          sarif_file: 'trivy-image-scan-results.sarif'
+      #- name: Upload scan results to GitHub Security tab
+      #  uses: github/codeql-action/upload-sarif@v2
+      #  if: success() || failure()
+      #  with:
+      #    sarif_file: 'trivy-image-scan-results.sarif'
       - name: Archive test artifact
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
+          name: image-scan-results
           path: trivy-image-scan-results.txt
       - name: Publish image
         run: |
