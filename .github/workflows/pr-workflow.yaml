@@ -105,27 +105,32 @@ jobs:
         with:
           scan-type: image
           image-ref: ${{env.IMAGE_NAME}}
-          format: 'sarif'
-          output: 'trivy-image-scan-results.sarif'
+          format: 'table'
+          output: 'trivy-image-scan-results.txt'
           exit-code: '1'
           ignore-unfixed: true
           severity: 'MEDIUM,HIGH,CRITICAL'
       - name: Check trivy results
         # This is a workaround for trivy exit-code that not working
         run: |
-          if grep -qE 'MEDIUM|HIGH|CRITICAL' trivy-image-scan-results.sarif; then
+          if grep -qE 'MEDIUM|HIGH|CRITICAL' trivy-image-scan-results.txt; then
             echo "Vulnerabilities found"
-            cat trivy-image-scan-results.sarif
+            cat trivy-image-scan-results.txt
             exit 1
           else
             echo "No significant vulnerabilities found"
             exit 0
           fi
-      - name: Upload scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+#      - name: Upload scan results to GitHub Security tab
+#        uses: github/codeql-action/upload-sarif@v2
+#        if: success() || failure()
+#        with:
+#          sarif_file: 'trivy-image-scan-results.sarif'
+      - name: Archive test artifact
         if: success() || failure()
+        uses: actions/upload-artifact@v3
         with:
-          sarif_file: 'trivy-image-scan-results.sarif'
+          path: trivy-image-scan-results.txt
       - name: Publish image
         run: |
           docker push --all-tags ${{env.DOCKER_REGISTRY}}/${{env.DOCKER_REPOSITORY}}
