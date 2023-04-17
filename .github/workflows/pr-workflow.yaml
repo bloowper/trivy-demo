@@ -30,7 +30,6 @@ jobs:
           path: build/test-results/test/TEST-*.xml
 
   filesystem-scan:
-    # https://aquasecurity.github.io/trivy/v0.40/docs/target/filesystem/
     name: Scan filesystem with Trivy
     runs-on: ubuntu-latest
     steps:
