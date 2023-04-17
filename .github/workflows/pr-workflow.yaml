@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKER_REGISTRY: ghcr.io/${{github.repository_owner}}
+  DOCKER_REGISTRY: ghcr.io
   DOCKER_REPOSITORY: trivy-demo
 
 jobs:
